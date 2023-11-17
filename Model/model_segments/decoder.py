@@ -49,7 +49,9 @@ class Decoder(nn.Module):
         self.conv8 = ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=(
             5, 5), stride=4, padding=1, output_padding=1)
 
-    def _init_weights_(self, module):
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
         if isinstance(module, (ConvTranspose2d, BatchNorm2d, Linear)):
             if module.bias.data is not None:
                 module.bias.data.zero_()
