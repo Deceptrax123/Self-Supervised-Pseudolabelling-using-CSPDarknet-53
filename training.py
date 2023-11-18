@@ -126,7 +126,7 @@ if __name__ == '__main__':
     paths = list(zip(xps, yps))
 
     params = {
-        'batch_size': 8,
+        'batch_size': 2,
         'shuffle': True,
         'num_workers': 0
     }
@@ -166,3 +166,8 @@ if __name__ == '__main__':
 
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
+
+    mps.empty_cache()
+    gc.collect(generation=2)
+
+    training_loop()
