@@ -1,5 +1,5 @@
-from model_segments.darknet import darknet53
-from model_segments.decoder import Decoder
+from Model.model_segments.darknet import darknet53
+from Model.model_segments.decoder import Decoder
 from torchsummary import summary
 from torch.nn import Module
 
