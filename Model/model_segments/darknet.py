@@ -48,13 +48,13 @@ class Darknet53(nn.Module):
             block, in_channels=128, num_blocks=1)
         self.conv4 = conv_batch(128, 256, stride=2)
         self.residual_block3 = self.make_layer(
-            block, in_channels=256, num_blocks=1)
+            block, in_channels=256, num_blocks=2)
         self.conv5 = conv_batch(256, 512, stride=2)
         self.residual_block4 = self.make_layer(
-            block, in_channels=512, num_blocks=1)
+            block, in_channels=512, num_blocks=2)
         self.conv6 = conv_batch(512, 1024, stride=2)
         self.residual_block5 = self.make_layer(
-            block, in_channels=1024, num_blocks=1)
+            block, in_channels=1024, num_blocks=2)
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(1024, self.num_classes)
 

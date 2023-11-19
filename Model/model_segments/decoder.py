@@ -89,5 +89,5 @@ class Decoder(nn.Module):
         return x
 
 
-# model = Decoder()
-# summary(model, input_size=(2,), batch_size=8, device='cpu')
+#model = Decoder()
+#summary(model, input_size=(2,), batch_size=8, device='cpu')

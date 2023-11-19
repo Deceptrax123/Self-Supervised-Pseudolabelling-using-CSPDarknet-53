@@ -125,10 +125,7 @@ if __name__ == '__main__':
             yps.append(i)
     xps, yps = sorted(xps), sorted(yps)
 
-    paths = list(zip(xps, yps))
-
-    #Randomly sample out 700 items owing to memory constraints
-    paths_sampled=random.sample(paths,700)
+    paths_zipped = list(zip(xps, yps))
 
     params = {
         'batch_size': 8,
@@ -136,7 +133,7 @@ if __name__ == '__main__':
         'num_workers': 0
     }
 
-    train, test = train_test_split(paths_sampled, test_size=0.25, shuffle=True)
+    train, test = train_test_split(paths_zipped, test_size=0.25, shuffle=True)
 
     train_set = NormMaskedDataset(paths=train)
     test_set = NormMaskedDataset(paths=test)

@@ -17,5 +17,5 @@ class Combined_Model(Module):
 
         return x
 
-#model = Combined_Model()
-#summary(model, input_size=(3, 512, 512), batch_size=8, device='cpu')
+# model = Combined_Model()
+# summary(model, input_size=(3, 1024, 1024), batch_size=8, device='cpu')
