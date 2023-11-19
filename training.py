@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 import gc
 import os
 from dotenv import load_dotenv
+from torchsummary import summary
+import random
 
 
 def train_epoch():
@@ -125,13 +127,16 @@ if __name__ == '__main__':
 
     paths = list(zip(xps, yps))
 
+    #Randomly sample out 700 items owing to memory constraints
+    paths_sampled=random.sample(paths,700)
+
     params = {
-        'batch_size': 2,
+        'batch_size': 8,
         'shuffle': True,
         'num_workers': 0
     }
 
-    train, test = train_test_split(paths, test_size=0.25, shuffle=True)
+    train, test = train_test_split(paths_sampled, test_size=0.25, shuffle=True)
 
     train_set = NormMaskedDataset(paths=train)
     test_set = NormMaskedDataset(paths=test)
@@ -147,10 +152,8 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_set, **params)
     test_loader = DataLoader(test_set, **params)
 
-    if torch.backends.mps.is_available():
-        device = torch.device("mps")
-    else:
-        device = torch.device("cpu")
+    #set the device
+    device=torch.device("mps")
 
     # Hyperparameters and losses
     LR = 0.001
@@ -170,4 +173,4 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    training_loop()
+    #training_loop()

@@ -42,22 +42,13 @@ class Decoder(nn.Module):
         self.relu6 = ReLU()
 
         self.conv7 = ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=(
-            5, 5), stride=4, output_padding=1, padding=1)
+            3, 3), stride=2, output_padding=1, padding=1)
         self.bn7 = BatchNorm2d(8)
         self.relu7 = ReLU()
 
         self.conv8 = ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=(
             5, 5), stride=4, padding=1, output_padding=1)
 
-        self.apply(self._init_weights)
-
-    def _init_weights(self, module):
-        if isinstance(module, (ConvTranspose2d, BatchNorm2d, Linear)):
-            if module.bias.data is not None:
-                module.bias.data.zero_()
-            else:
-                nn.init.kaiming_normal_(
-                    module.weight.data, mode='fan_in', nonlinearity='relu')
 
     def forward(self, x):
         # Linear and reshape
