@@ -173,4 +173,4 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    #training_loop()
+    training_loop()
