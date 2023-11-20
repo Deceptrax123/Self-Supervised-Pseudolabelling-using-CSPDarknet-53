@@ -50,6 +50,15 @@ class Decoder(nn.Module):
             3, 3), stride=2, padding=1, output_padding=1)
         
         self.pool=AdaptiveAvgPool2d(output_size=(224,224))
+
+        self.apply(self._init_weights)
+
+    def _init_weights(self,module):
+        if isinstance(module,(ConvTranspose2d,BatchNorm2d,Linear)):
+            if module.bias.data is not None:
+                module.bias.data.zero_()
+            else:
+                nn.init.kaiming_normal_(module.weight.data,mode='fan_in',nonlinearity='relu')
         
     def forward(self, x):
         # Linear and reshape

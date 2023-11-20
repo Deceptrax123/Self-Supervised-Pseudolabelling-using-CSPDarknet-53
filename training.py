@@ -2,9 +2,9 @@ import torch
 from torch.utils.data import DataLoader
 from dataset import NormMaskedDataset
 from Model.model import Combined_Model
-from Model.model_segments.darknet import darknet53
 from Model.model_segments.decoder import Decoder
-from initialize_weights import initialize_weights
+from Model.model_segments.darknet import Darknet53
+from Model.model_segments.darknet import DarkResidualBlock
 import wandb
 import torch.multiprocessing
 from torch import mps
@@ -96,14 +96,10 @@ def training_loop():
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/model{epoch}".format(
-                    epoch=epoch+1)
-                backbone_path = "./weights/backbone/model{epoch}".format(
+                complete_path = "./weights/complete/run_1/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
-                torch.save(darknet53(2).state_dict(), backbone_path)
-
 
 if __name__ == '__main__':
     torch.multiprocessing.set_sharing_strategy('file_system')
@@ -161,8 +157,7 @@ if __name__ == '__main__':
 
     # models and optimizers
     model = Combined_Model().to(device=device)
-    initialize_weights(model)
-
+    
     model_optimizer = torch.optim.Adam(
         model.parameters(), lr=LR, betas=(0.9, 0.999))
 

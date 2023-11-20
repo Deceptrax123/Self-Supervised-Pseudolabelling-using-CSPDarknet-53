@@ -8,7 +8,7 @@ from torchsummary import summary
 def conv_batch(in_num, out_num, kernel_size=3, padding=1, stride=1):
     return nn.Sequential(
         nn.Conv2d(in_num, out_num, kernel_size=kernel_size,
-                  stride=stride, padding=padding, bias=False),
+                  stride=stride, padding=padding, bias=True),
         nn.BatchNorm2d(out_num),
         nn.LeakyReLU())
 
@@ -58,6 +58,15 @@ class Darknet53(nn.Module):
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(1024, self.num_classes)
 
+        self.apply(self._init_weights)
+
+    def _init_weights(self,module):
+        if isinstance(module,(nn.Conv2d,nn.BatchNorm2d)):
+                if module.bias.data is not None:
+                    module.bias.data.zero_()
+                else:
+                    nn.init.kaiming_normal_(module.weight.data,mode='fan_in',nonlinearity='leaky_relu')
+
     def forward(self, x):
         out = self.conv1(x)
         out = self.conv2(out)
@@ -82,10 +91,5 @@ class Darknet53(nn.Module):
             layers.append(block(in_channels))
         return nn.Sequential(*layers)
 
-
-def darknet53(num_classes):
-    return Darknet53(DarkResidualBlock, num_classes)
-
-
-# model = darknet53(2)
+#model=Darknet53(DarkResidualBlock,2)
 # summary(model, input_size=(3, 1024, 1024), batch_size=8, device='cpu')
