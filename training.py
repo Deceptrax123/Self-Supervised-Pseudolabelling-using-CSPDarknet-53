@@ -4,6 +4,7 @@ from dataset import NormMaskedDataset
 from Model.model import Combined_Model
 from Model.model_segments.darknet import darknet53
 from Model.model_segments.decoder import Decoder
+from initialize_weights import initialize_weights
 import wandb
 import torch.multiprocessing
 from torch import mps
@@ -160,9 +161,10 @@ if __name__ == '__main__':
 
     # models and optimizers
     model = Combined_Model().to(device=device)
+    initialize_weights(model)
 
     model_optimizer = torch.optim.Adam(
-        model.parameters(), lr=LR, betas=(0.9, 0.999), weight_decay=0.001)
+        model.parameters(), lr=LR, betas=(0.9, 0.999))
 
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
@@ -170,7 +172,4 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    #training_loop()
-    for m in model.modules():
-        if isinstance(m,nn.Conv2d):
-            print(1)
+    training_loop()
