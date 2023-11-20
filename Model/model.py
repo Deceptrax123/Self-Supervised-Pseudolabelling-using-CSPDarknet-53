@@ -18,4 +18,4 @@ class Combined_Model(Module):
         return x
 
 # model = Combined_Model()
-# summary(model, input_size=(3, 1024, 1024), batch_size=8, device='cpu')
+# summary(model, input_size=(3, 224, 224), batch_size=8, device='cpu')

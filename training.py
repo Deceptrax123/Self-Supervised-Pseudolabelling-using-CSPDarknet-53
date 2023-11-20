@@ -170,4 +170,7 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    training_loop()
+    #training_loop()
+    for m in model.modules():
+        if isinstance(m,nn.Conv2d):
+            print(1)

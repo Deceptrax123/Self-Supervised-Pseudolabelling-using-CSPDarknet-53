@@ -25,7 +25,7 @@ class NormMaskedDataset(torch.utils.data.Dataset):
             root_x+sample_x_path), Image.open(root_y+sample_y_path)
 
         # Convert PIL Image to Image Tensor
-        image2tensor = T.Compose([T.Resize(size=(512,512)),T.ToTensor()])
+        image2tensor = T.Compose([T.Resize(size=(224,224)),T.ToTensor()])
 
         x_tensor, y_tensor = image2tensor(sample_x), image2tensor(sample_y)
 

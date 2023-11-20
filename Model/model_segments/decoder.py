@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch.nn import BatchNorm2d, ReLU, Linear, ConvTranspose2d
+from torch.nn import BatchNorm2d, ReLU, Linear, ConvTranspose2d,AdaptiveAvgPool2d
 from torchsummary import summary
 
 
@@ -47,9 +47,10 @@ class Decoder(nn.Module):
         self.relu7 = ReLU()
 
         self.conv8 = ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=(
-            5, 5), stride=4, padding=1, output_padding=1)
-
-
+            3, 3), stride=2, padding=1, output_padding=1)
+        
+        self.pool=AdaptiveAvgPool2d(output_size=(224,224))
+        
     def forward(self, x):
         # Linear and reshape
         x = self.linear(x)
@@ -85,6 +86,8 @@ class Decoder(nn.Module):
         x = self.relu7(x)
 
         x = self.conv8(x)
+
+        x=self.pool(x)
 
         return x
 
