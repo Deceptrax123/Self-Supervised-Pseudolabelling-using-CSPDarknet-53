@@ -34,7 +34,13 @@ class NormMaskedDataset(torch.utils.data.Dataset):
         std_img = torch.std(x_tensor, [1, 2])
         norm = T.Normalize(mean=mean_img, std=std_img)
 
+        # Normalize Y
+        mean_y=torch.mean(y_tensor,[1,2])
+        std_y=torch.std(y_tensor,[1,2])
+        norm_y=T.Normalize(mean=mean_y,std=std_y)
+
         x_tensor_norm = norm(x_tensor)
+        y_tensor_norm=norm_y(y_tensor)
 
         # Return samples
-        return x_tensor_norm, y_tensor
+        return x_tensor_norm, y_tensor_norm
