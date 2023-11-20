@@ -153,11 +153,11 @@ if __name__ == '__main__':
     LR = 0.001
     NUM_EPOCHS = 10000
 
-    objective = nn.MSELoss()
+    objective = nn.SmoothL1Loss()
 
     # models and optimizers
     model = Combined_Model().to(device=device)
-    
+
     model_optimizer = torch.optim.Adam(
         model.parameters(), lr=LR, betas=(0.9, 0.999))
 

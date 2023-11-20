@@ -48,8 +48,6 @@ class Decoder(nn.Module):
 
         self.conv8 = ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=(
             3, 3), stride=2, padding=1, output_padding=1)
-        
-        self.pool=AdaptiveAvgPool2d(output_size=(224,224))
 
         self.apply(self._init_weights)
 
@@ -95,8 +93,6 @@ class Decoder(nn.Module):
         x = self.relu7(x)
 
         x = self.conv8(x)
-
-        x=self.pool(x)
 
         return x
 
