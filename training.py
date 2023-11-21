@@ -106,23 +106,14 @@ if __name__ == '__main__':
     load_dotenv(".env")
 
     trainX_path = os.getenv("TRAIN_X_PATH")
-    trainY_path = os.getenv("TRAIN_Y_PATH")
 
-    xpaths = sorted(os.listdir(trainX_path))
-    ypaths = sorted(os.listdir(trainY_path))
+    labels = sorted(os.listdir(trainX_path))
 
     # remove '_' in filenames
-    xps, yps = list(), list()
-    for i in xpaths:
+    labs=list()
+    for i in labels:
         if '_' not in i:
-            xps.append(i)
-
-    for i in ypaths:
-        if '_' not in i:
-            yps.append(i)
-    xps, yps = sorted(xps), sorted(yps)
-
-    paths_zipped = list(zip(xps, yps))
+            labs.append(i)
 
     params = {
         'batch_size': 8,
@@ -130,7 +121,7 @@ if __name__ == '__main__':
         'num_workers': 0
     }
 
-    train, test = train_test_split(paths_zipped, test_size=0.25, shuffle=True)
+    train, test = train_test_split(labs, test_size=0.25, shuffle=True)
 
     train_set = NormMaskedDataset(paths=train)
     test_set = NormMaskedDataset(paths=test)

@@ -16,13 +16,13 @@ class NormMaskedDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         # Get env variables for root paths
+        load_dotenv(".env")
         root_x = os.getenv("TRAIN_X_PATH")
         root_y = os.getenv("TRAIN_Y_PATH")
 
         sample = self.paths[index]
-        sample_x_path, sample_y_path = sample[0], sample[1]
         sample_x, sample_y = Image.open(
-            root_x+sample_x_path), Image.open(root_y+sample_y_path)
+            root_x+sample), Image.open(root_y+sample)
 
         # Convert PIL Image to Image Tensor
         image2tensor = T.Compose([T.Resize(size=(256,256)),T.ToTensor()])
