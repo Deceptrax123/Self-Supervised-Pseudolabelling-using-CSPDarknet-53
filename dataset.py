@@ -40,7 +40,7 @@ class NormMaskedDataset(torch.utils.data.Dataset):
         norm_y=T.Normalize(mean=mean_y,std=std_y)
 
         x_tensor_norm = norm(x_tensor)
-        y_tensor_norm=norm_y(y_tensor)
+        y_tensor_norm = norm_y(y_tensor)
 
         # Return samples
         return x_tensor_norm, y_tensor_norm

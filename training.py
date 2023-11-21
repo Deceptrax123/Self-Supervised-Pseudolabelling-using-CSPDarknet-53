@@ -96,7 +96,7 @@ def training_loop():
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/run_1/model{epoch}.pth".format(
+                complete_path = "./weights/complete/run_2/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
