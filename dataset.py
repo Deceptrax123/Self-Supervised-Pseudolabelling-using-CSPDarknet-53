@@ -25,22 +25,10 @@ class NormMaskedDataset(torch.utils.data.Dataset):
             root_x+sample), Image.open(root_y+sample)
 
         # Convert PIL Image to Image Tensor
-        image2tensor = T.Compose([T.Resize(size=(256,256)),T.ToTensor()])
+        image2tensor = T.Compose([T.Resize(size=(256, 256)), T.ToTensor(
+        ), T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
         x_tensor, y_tensor = image2tensor(sample_x), image2tensor(sample_y)
 
-        # Normalize X
-        mean_img = torch.mean(x_tensor, [1, 2])
-        std_img = torch.std(x_tensor, [1, 2])
-        norm = T.Normalize(mean=mean_img, std=std_img)
-
-        # Normalize Y
-        mean_y=torch.mean(y_tensor,[1,2])
-        std_y=torch.std(y_tensor,[1,2])
-        norm_y=T.Normalize(mean=mean_y,std=std_y)
-
-        x_tensor_norm = norm(x_tensor)
-        y_tensor_norm = norm_y(y_tensor)
-
         # Return samples
-        return x_tensor_norm, y_tensor_norm
+        return x_tensor, y_tensor

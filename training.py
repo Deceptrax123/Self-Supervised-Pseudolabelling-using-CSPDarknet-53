@@ -96,10 +96,11 @@ def training_loop():
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/run_2/model{epoch}.pth".format(
+                complete_path = "./weights/complete/run_3/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
+
 
 if __name__ == '__main__':
     torch.multiprocessing.set_sharing_strategy('file_system')
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     labels = sorted(os.listdir(trainX_path))
 
     # remove '_' in filenames
-    labs=list()
+    labs = list()
     for i in labels:
         if '_' not in i:
             labs.append(i)
@@ -137,8 +138,8 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_set, **params)
     test_loader = DataLoader(test_set, **params)
 
-    #set the device
-    device=torch.device("mps")
+    # set the device
+    device = torch.device("mps")
 
     # Hyperparameters and losses
     LR = 0.001
