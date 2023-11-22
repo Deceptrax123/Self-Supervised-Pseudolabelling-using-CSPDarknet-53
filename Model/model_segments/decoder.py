@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch.nn import BatchNorm2d, ReLU, Linear, ConvTranspose2d,AdaptiveAvgPool2d
+from torch.nn import BatchNorm2d, ReLU, Linear, ConvTranspose2d, Tanh, Dropout2d
 from torchsummary import summary
 
 
@@ -49,15 +49,27 @@ class Decoder(nn.Module):
         self.conv8 = ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=(
             3, 3), stride=2, padding=1, output_padding=1)
 
+        self.activation = Tanh()
+
+        # dropouts
+        self.dp1 = Dropout2d(0.3)
+        self.dp2 = Dropout2d(0.3)
+        self.dp3 = Dropout2d(0.3)
+        self.dp4 = Dropout2d(0.3)
+        self.dp5 = Dropout2d(0.3)
+        self.dp6 = Dropout2d(0.3)
+        self.dp7 = Dropout2d(0.3)
+
         self.apply(self._init_weights)
 
-    def _init_weights(self,module):
-        if isinstance(module,(ConvTranspose2d,BatchNorm2d,Linear)):
+    def _init_weights(self, module):
+        if isinstance(module, (ConvTranspose2d, BatchNorm2d, Linear)):
             if module.bias.data is not None:
                 module.bias.data.zero_()
             else:
-                nn.init.kaiming_normal_(module.weight.data,mode='fan_in',nonlinearity='relu')
-        
+                nn.init.kaiming_normal_(
+                    module.weight.data, mode='fan_in', nonlinearity='relu')
+
     def forward(self, x):
         # Linear and reshape
         x = self.linear(x)
@@ -65,37 +77,45 @@ class Decoder(nn.Module):
 
         # Decoder
         x = self.conv1(x)
+        x = self.dp1(x)
         x = self.bn1(x)
         x = self.relu1(x)
 
         x = self.conv2(x)
+        x = self.dp2(x)
         x = self.bn2(x)
         x = self.relu2(x)
 
         x = self.conv3(x)
+        x = self.dp3(x)
         x = self.bn3(x)
         x = self.relu3(x)
 
         x = self.conv4(x)
+        x = self.dp4(x)
         x = self.bn4(x)
         x = self.relu4(x)
 
         x = self.conv5(x)
+        x = self.dp5(x)
         x = self.bn5(x)
         x = self.relu5(x)
 
         x = self.conv6(x)
+        x = self.dp6(x)
         x = self.bn6(x)
         x = self.relu6(x)
 
         x = self.conv7(x)
+        x = self.dp7(x)
         x = self.bn7(x)
         x = self.relu7(x)
 
         x = self.conv8(x)
+        x = self.activation(x)
 
         return x
 
 
-#model = Decoder()
-#summary(model, input_size=(2,), batch_size=8, device='cpu')
+# model = Decoder()
+# summary(model, input_size=(2,), batch_size=8, device='cpu')
