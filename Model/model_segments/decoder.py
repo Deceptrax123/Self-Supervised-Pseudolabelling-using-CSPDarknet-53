@@ -52,13 +52,13 @@ class Decoder(nn.Module):
         self.activation = Tanh()
 
         # dropouts
-        self.dp1 = Dropout2d(0.3)
-        self.dp2 = Dropout2d(0.3)
-        self.dp3 = Dropout2d(0.3)
-        self.dp4 = Dropout2d(0.3)
-        self.dp5 = Dropout2d(0.3)
-        self.dp6 = Dropout2d(0.3)
-        self.dp7 = Dropout2d(0.3)
+        self.dp1 = Dropout2d(0.5)
+        self.dp2 = Dropout2d(0.5)
+        self.dp3 = Dropout2d(0.5)
+        self.dp4 = Dropout2d(0.5)
+        self.dp5 = Dropout2d(0.5)
+        self.dp6 = Dropout2d(0.5)
+        self.dp7 = Dropout2d(0.5)
 
         self.apply(self._init_weights)
 
@@ -112,7 +112,6 @@ class Decoder(nn.Module):
         x = self.relu7(x)
 
         x = self.conv8(x)
-        x = self.activation(x)
 
         return x
 
