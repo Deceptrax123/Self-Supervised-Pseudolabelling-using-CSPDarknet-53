@@ -5,6 +5,7 @@ from Model.model import Combined_Model
 from Model.model_segments.decoder import Decoder
 from Model.model_segments.darknet import Darknet53
 from Model.model_segments.darknet import DarkResidualBlock
+from initialize_weights import initialize
 import wandb
 import torch.multiprocessing
 from torch import mps
@@ -122,7 +123,7 @@ if __name__ == '__main__':
         'num_workers': 0
     }
 
-    train, test = train_test_split(labs, test_size=0.25, shuffle=True)
+    train, test = train_test_split(labs, test_size=0.20, shuffle=True)
 
     train_set = NormMaskedDataset(paths=train)
     test_set = NormMaskedDataset(paths=test)
@@ -145,10 +146,12 @@ if __name__ == '__main__':
     LR = 0.001
     NUM_EPOCHS = 10000
 
-    objective = nn.SmoothL1Loss()
-
+    objective = nn.MSELoss()
     # models and optimizers
     model = Combined_Model().to(device=device)
+
+    # Initialize Weights
+    initialize(model)
 
     model_optimizer = torch.optim.Adam(
         model.parameters(), lr=LR, betas=(0.9, 0.999))

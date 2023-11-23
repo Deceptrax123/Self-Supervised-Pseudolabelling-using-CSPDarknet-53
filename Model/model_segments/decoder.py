@@ -60,16 +60,6 @@ class Decoder(nn.Module):
         self.dp6 = Dropout2d(0.5)
         self.dp7 = Dropout2d(0.5)
 
-        self.apply(self._init_weights)
-
-    def _init_weights(self, module):
-        if isinstance(module, (ConvTranspose2d, BatchNorm2d, Linear)):
-            if module.bias.data is not None:
-                module.bias.data.zero_()
-            else:
-                nn.init.kaiming_normal_(
-                    module.weight.data, mode='fan_in', nonlinearity='relu')
-
     def forward(self, x):
         # Linear and reshape
         x = self.linear(x)
