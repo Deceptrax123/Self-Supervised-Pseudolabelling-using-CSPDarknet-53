@@ -62,7 +62,7 @@ class Bottleneck(Module):
 
         x = self.dp4(x)
 
-        x = self.relu5(x)
+        x = self.linear5(x)
         x = self.bn5(x)
         x = self.relu5(x)
 
