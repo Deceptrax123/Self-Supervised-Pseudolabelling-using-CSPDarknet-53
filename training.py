@@ -2,9 +2,8 @@ import torch
 from torch.utils.data import DataLoader
 from dataset import NormMaskedDataset
 from Model.model import Combined_Model
-from Model.model_segments.decoder import Decoder
-from Model.model_segments.darknet import Darknet53
-from Model.model_segments.darknet import DarkResidualBlock
+from Model.model_segments.decoder import Darknet53
+from Model.model_segments.decoder import DarkResidualBlock
 from initialize_weights import initialize
 import wandb
 import torch.multiprocessing
@@ -160,4 +159,7 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    training_loop()
+    mod = Darknet53(DarkResidualBlock, 2)
+    summary(mod, input_size=(2,), batch_size=8, device='cpu')
+
+    # training_loop()
