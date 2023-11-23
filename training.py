@@ -42,7 +42,6 @@ def train_epoch():
         del x_sample
         del y_sample
         del predictions
-        del loss
         mps.empty_cache()
         gc.collect(generation=2)
 
@@ -65,7 +64,6 @@ def test_epoch():
         # add losses
         epoch_loss += loss.item()
 
-        del loss
         del x_sample
         del predictions
         del y_sample
