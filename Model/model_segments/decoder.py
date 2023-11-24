@@ -32,8 +32,8 @@ class DecoderResidualBlock(nn.Module):
 
         out = self.layer1(x)
         out = self.layer2(out)
-        out += residual
-        return out
+        t = out+residual
+        return t
 
 
 class Decoder(nn.Module):
