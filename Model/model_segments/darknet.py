@@ -1,5 +1,3 @@
-# Code obtained from https://github.com/developer0hye/PyTorch-Darknet53/blob/master/model.py
-
 import torch
 from torch import nn
 from torchsummary import summary
@@ -61,26 +59,23 @@ class Darknet53(nn.Module):
     def forward(self, x):
         out = self.conv1(x)
         out = self.conv2(out)
-        out = self.residual_block1(out)
-        out = self.conv3(out)
-        out = self.residual_block2(out)
-        out = self.conv4(out)
-        out = self.residual_block3(out)
-        out = self.conv5(out)
-        out = self.residual_block4(out)
-        out = self.conv6(out)
-        out = self.residual_block5(out)
-        out = self.global_avg_pool(out)
+        out_1 = self.residual_block1(out)
+        out = self.conv3(out_1)
+        out_2 = self.residual_block2(out)
+        out = self.conv4(out_2)
+        out_3 = self.residual_block3(out)
+        out = self.conv5(out_3)
+        out_4 = self.residual_block4(out)
+        out = self.conv6(out_4)
+        out_5 = self.residual_block5(out)
+        out = self.global_avg_pool(out_5)
         out = out.view(-1, 1024)
         out = self.fc(out)
 
-        return out
+        return out, out_1, out_2, out_3, out_4, out_5
 
     def make_layer(self, block, in_channels, num_blocks):
         layers = []
         for i in range(0, num_blocks):
             layers.append(block(in_channels))
         return nn.Sequential(*layers)
-
-# model=Darknet53(DarkResidualBlock,2)
-# summary(model, input_size=(3, 1024, 1024), batch_size=8, device='cpu')

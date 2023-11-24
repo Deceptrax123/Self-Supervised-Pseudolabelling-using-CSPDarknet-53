@@ -3,6 +3,8 @@
 import torch
 from torch import nn
 from torchsummary import summary
+from Model.model_segments.darknet import Darknet53
+from Model.model_segments.darknet import DarkResidualBlock
 
 
 def conv_batch(in_num, out_num, kernel_size=3, padding=1, output_padding=1, stride=1):
@@ -40,43 +42,58 @@ class Decoder(nn.Module):
 
         self.num_classes = num_classes
 
+        # Encoder Module
+        self.encoder = Darknet53(DarkResidualBlock, 2)
+
+        # Linear and upsample modules
         self.fc = nn.Linear(2, 1024)
         self.up = nn.Upsample(scale_factor=8)
 
-        self.conv1 = conv_batch(1024, 512, stride=2)
-        self.conv2 = conv_batch(512, 256, stride=2)
+        # Decoder modules
         self.residual_block1 = self.make_layer(
-            block, in_channels=256, num_blocks=4)
-        self.conv3 = conv_batch(256, 128, stride=2)
+            block, in_channels=1024, num_blocks=4)
+        self.conv1 = conv_batch(in_num=1024, out_num=512, stride=2)
+
         self.residual_block2 = self.make_layer(
-            block, in_channels=128, num_blocks=8)
-        self.conv4 = conv_batch(128, 64, stride=2)
+            block, in_channels=512, num_blocks=8)
+        self.conv2 = conv_batch(in_num=512, out_num=256, stride=2)
+
         self.residual_block3 = self.make_layer(
-            block, in_channels=64, num_blocks=8)
-        self.conv5 = conv_batch(64, 32, stride=2)
+            block, in_channels=256, num_blocks=8)
+        self.conv3 = conv_batch(in_num=256, out_num=128, stride=2)
+
         self.residual_block4 = self.make_layer(
-            block, in_channels=32, num_blocks=2)
-        self.conv6 = conv_batch(32, 3, stride=1, output_padding=0)
+            block, in_channels=128, num_blocks=2)
+        self.conv4 = conv_batch(in_num=128, out_num=64, stride=2)
+
         self.residual_block5 = self.make_layer(
-            block, in_channels=3, num_blocks=1)
+            block, in_channels=64, num_blocks=1)
+
+        self.conv5 = conv_batch(in_num=64, out_num=32, stride=2)
+        self.conv6 = conv_batch(in_num=32, out_num=3,
+                                stride=1, output_padding=0)
 
     def forward(self, x):
+        # encoder output with buffer outputs for skip connnections
+        # x, x1, x2, x3, x4, x5 = self.encoder(x)
 
+        # Linear with reshape and upsampling
         out = self.fc(x)
-
         out = out.view(out.size(0), 1024, 1, 1)
         out = self.up(out)
-        out = self.conv1(out)
-        out = self.conv2(out)
+
+        # Decoder Convolutions and encoder-decoder skip connections
         out = self.residual_block1(out)
-        out = self.conv3(out)
+        out = self.conv1(out)
         out = self.residual_block2(out)
-        out = self.conv4(out)
+        out = self.conv2(out)
         out = self.residual_block3(out)
-        out = self.conv5(out)
+        out = self.conv3(out)
         out = self.residual_block4(out)
-        out = self.conv6(out)
+        out = self.conv4(out)
         out = self.residual_block5(out)
+        out = self.conv5(out)
+        out = self.conv6(out)
 
         return out
 
@@ -85,6 +102,3 @@ class Decoder(nn.Module):
         for i in range(0, num_blocks):
             layers.append(block(in_channels))
         return nn.Sequential(*layers)
-
-# model=Darknet53(DarkResidualBlock,2)
-# summary(model, input_size=(3, 1024, 1024), batch_size=8, device='cpu')
