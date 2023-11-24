@@ -75,23 +75,28 @@ class Decoder(nn.Module):
 
     def forward(self, x):
         # encoder output with buffer outputs for skip connnections
-        # x, x1, x2, x3, x4, x5 = self.encoder(x)
+        x_0, x1, x2, x3, x4, x5 = self.encoder.forward(x)
 
         # Linear with reshape and upsampling
-        out = self.fc(x)
+        out = self.fc(x_0)
         out = out.view(out.size(0), 1024, 1, 1)
         out = self.up(out)
 
         # Decoder Convolutions and encoder-decoder skip connections
         out = self.residual_block1(out)
+        out = torch.add(out, x5)
         out = self.conv1(out)
         out = self.residual_block2(out)
+        out = torch.add(out, x4)
         out = self.conv2(out)
         out = self.residual_block3(out)
+        out = torch.add(out, x3)
         out = self.conv3(out)
         out = self.residual_block4(out)
+        out = torch.add(out, x2)
         out = self.conv4(out)
         out = self.residual_block5(out)
+        out = torch.add(out, x1)
         out = self.conv5(out)
         out = self.conv6(out)
 
