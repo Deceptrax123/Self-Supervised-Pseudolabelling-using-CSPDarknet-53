@@ -14,9 +14,9 @@ def conv_batch(in_num, out_num, kernel_size=3, padding=1, output_padding=1, stri
 
 
 # Residual block
-class DarkResidualBlock(nn.Module):
+class DecoderResidualBlock(nn.Module):
     def __init__(self, in_channels):
-        super(DarkResidualBlock, self).__init__()
+        super(DecoderResidualBlock, self).__init__()
 
         increased_channels = int(in_channels//2)
 
@@ -34,13 +34,14 @@ class DarkResidualBlock(nn.Module):
         return out
 
 
-class Darknet53(nn.Module):
+class Decoder(nn.Module):
     def __init__(self, block, num_classes):
-        super(Darknet53, self).__init__()
+        super(Decoder, self).__init__()
 
         self.num_classes = num_classes
 
         self.fc = nn.Linear(2, 1024)
+        self.up = nn.Upsample(scale_factor=8)
 
         self.conv1 = conv_batch(1024, 512, stride=2)
         self.conv2 = conv_batch(512, 256, stride=2)
@@ -52,7 +53,7 @@ class Darknet53(nn.Module):
         self.conv4 = conv_batch(128, 64, stride=2)
         self.residual_block3 = self.make_layer(
             block, in_channels=64, num_blocks=8)
-        self.conv5 = conv_batch(64, 42, stride=2)
+        self.conv5 = conv_batch(64, 32, stride=2)
         self.residual_block4 = self.make_layer(
             block, in_channels=32, num_blocks=2)
         self.conv6 = conv_batch(32, 3, stride=1, output_padding=0)
@@ -64,6 +65,7 @@ class Darknet53(nn.Module):
         out = self.fc(x)
 
         out = out.view(out.size(0), 1024, 1, 1)
+        out = self.up(out)
         out = self.conv1(out)
         out = self.conv2(out)
         out = self.residual_block1(out)
