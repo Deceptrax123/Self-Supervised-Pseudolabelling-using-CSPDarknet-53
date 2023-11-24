@@ -92,7 +92,7 @@ def training_loop():
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/run_4/model{epoch}.pth".format(
+                complete_path = "./weights/complete/run_3/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         'num_workers': 0
     }
 
-    train, test = train_test_split(labs, test_size=0.20, shuffle=True)
+    train, test = train_test_split(labs, test_size=0.25, shuffle=True)
 
     train_set = NormMaskedDataset(paths=train)
     test_set = NormMaskedDataset(paths=test)
@@ -157,5 +157,4 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    mod = Combined_Model()
-    summary(mod, input_size=(3, 256, 256), batch_size=8, device='cpu')
+    training_loop()
