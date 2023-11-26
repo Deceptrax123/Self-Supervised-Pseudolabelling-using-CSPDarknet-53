@@ -16,8 +16,8 @@ from torchsummary import summary
 
 
 def mask_penalty(mask):
-    w1 = 0.75
-    w2 = 0.25
+    w1 = 0.95
+    w2 = 0.05
 
     weighted_mask = (torch.where(mask == 1.0, w1**2, w2**2)).to(device=device)
 
@@ -38,7 +38,7 @@ def train_epoch():
         # Compute Loss
         # L2 Bounding Box Regularization
         loss = torch.mean(
-            torch.add(objective(predictions, y_sample), mask_penalty(mask)))
+            torch.add(objective(predictions, y_sample), lamb*mask_penalty(mask)))
 
         # Perform backpropagation
         loss.backward()
@@ -104,7 +104,7 @@ def training_loop():
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/box_penalty/model{epoch}.pth".format(
+                complete_path = "./weights/complete/box_penalty/w_0.95/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
@@ -162,6 +162,7 @@ if __name__ == '__main__':
 
     model_optimizer = torch.optim.Adam(
         model.parameters(), lr=LR, betas=(0.9, 0.999))
+    lamb = 1
 
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
