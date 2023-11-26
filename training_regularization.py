@@ -153,7 +153,7 @@ if __name__ == '__main__':
     LR = 0.001
     NUM_EPOCHS = 10000
 
-    objective = nn.MSELoss(reduction=None)
+    objective = nn.MSELoss(reduction='none')
     # models and optimizers
     model = Combined_Model().to(device=device)
 
