@@ -61,7 +61,7 @@ def train_epoch():
 def test_epoch():
     epoch_loss = 0
 
-    for step, (x_sample, y_sample) in enumerate(test_loader):
+    for step, (x_sample, y_sample, _) in enumerate(test_loader):
         x_sample = x_sample.to(device=device)
         y_sample = y_sample.to(device=device)
 
@@ -98,13 +98,13 @@ def training_loop():
             print("L2 Test Loss {loss}".format(loss=test_loss))
 
             wandb.log({
-                "L2 Pixel Train Loss": train_loss,
+                "L2 Pixel Regularization Train Loss": train_loss,
                 "L2 Pixel Test Loss": test_loss
             })
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/run_3/model{epoch}.pth".format(
+                complete_path = "./weights/complete/box_penalty/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
