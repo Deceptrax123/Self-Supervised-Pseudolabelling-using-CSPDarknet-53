@@ -19,5 +19,5 @@
 
 ## Usage
 - To improve detections on YOLO models by learning a set of weights before fine tuning.
-- Detects multiple objects in the same image
+- SSL method to detect multiple objects in the same image
 - Saves on computation cost while training object detectors from scratch
