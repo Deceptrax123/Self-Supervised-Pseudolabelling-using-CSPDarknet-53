@@ -162,7 +162,7 @@ if __name__ == '__main__':
 
     model_optimizer = torch.optim.Adam(
         model.parameters(), lr=LR, betas=(0.9, 0.999))
-    lamb = 5
+    lamb = 5.0
 
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
