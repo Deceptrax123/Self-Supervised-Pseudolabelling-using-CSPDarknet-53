@@ -5,7 +5,7 @@
 
 
 ## Methodology
-- The Model was trained using pixel wise mean square error loss with additional penalty added to pixels within a bounding box.
+- The Model was trained using pixel wise mean square error loss with additional penalty added to pixels that belong to a bounding box.
 - Dataset prepared by blurring wheat heads(X) to reconstruct the image with wheat heads(Y)
 - Global Wheat Dataset,2021 was used to pretrain the model
   
