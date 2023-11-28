@@ -5,7 +5,10 @@
 
 
 ## Methodology
-The Model was trained using pixel wise mean square error loss with additional penalty to pixels within a box
+- The Model was trained using pixel wise mean square error loss with additional penalty added to pixels within a bounding box.
+- Dataset prepared by blurring wheat heads(X) to reconstruct the image with wheat heads(Y)
+- Global Wheat Dataset,2021 was used to pretrain the model
+  
 
 ## Architecture
 |Architecture|Description|
@@ -15,5 +18,6 @@ The Model was trained using pixel wise mean square error loss with additional pe
 |Skip Connections|Between Residual Blocks from encoder to decoder|
 
 ## Usage
-. To improve detections on YOLO models by learning a set of weights before fine tuning.
-. Saves on computation cost while training object detectors from scratch
+- To improve detections on YOLO models by learning a set of weights before fine tuning.
+- Detects multiple objects in the same image
+- Saves on computation cost while training object detectors from scratch
