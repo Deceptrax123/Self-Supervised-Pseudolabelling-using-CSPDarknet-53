@@ -17,7 +17,7 @@ class WheatMaskDataset(torch.utils.data.Dataset):
     def __getitem__(self, index):
         # Get env variables for root paths
         load_dotenv(".env")
-        root_x = os.getenv("TRAIN_X_PATH")
+        root_x = os.getenv("TRAIN_Y_PATH")
         root_y = os.getenv("TRAIN_Y_PATH")
         root_mask = os.getenv("MASK")
 
