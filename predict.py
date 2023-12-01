@@ -17,11 +17,11 @@ def get_predictions():
     # Eval mode
     model.eval()
     model.load_state_dict(torch.load(
-        "./weights/complete/box_penalty/w_0.95_reg_5/model50.pth"))
+        "./weights/complete/box_penalty_no_blur/w_0.95_lamb_5/model20.pth"))
 
     load_dotenv(".env")
 
-    trainX_path = os.getenv("TRAIN_X_PATH")
+    trainX_path = os.getenv("TRAIN_Y_PATH")
     trainY_path = os.getenv("TRAIN_Y_PATH")
     mask = os.getenv("MASK")
 
