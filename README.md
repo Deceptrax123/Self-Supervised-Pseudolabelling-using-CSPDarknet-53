@@ -1,6 +1,6 @@
 # Self Supervised Pretraining using Autoencoders to detect multiple objects
 
-![Output_1](experiments/Regularization/w_0.95_lambda_5/Blurred_X/output.png)
+![Output_1](Experiments/Regularization/w_0.95_lambda_5/Blurred_X/output.png)
 ![Output_2](Experiments/Regularization/w_0.95_lambda_5/no_blur/output_2.png)
 
 ## Methodology
