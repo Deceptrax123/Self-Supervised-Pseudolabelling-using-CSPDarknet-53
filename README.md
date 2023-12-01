@@ -1,13 +1,27 @@
 # Self Supervised Pretraining using Autoencoders to detect multiple objects
 
-![Output_1](outputs/Regularization/w_0.95_lambda_5/output.png)
-![Output_2](outputs/Regularization/w_0.95_lambda_5/output_2.png)
+![Output_1](experiments/Regularization/w_0.95_lambda_5/Blurred_X/output.png)
+![Output_3](Experiments/Regularization/w_0.95_lambda_5/no_blur/output_2.png)
+![Output_2](experiments/Regularization/w_0.95_lambda_5/Blurred_X/output_2.png)
 
 
 ## Methodology
 - The Model was trained using pixel wise mean square error loss with additional penalty added to pixels that belong to a bounding box.
 - Dataset prepared by blurring wheat heads(X) to reconstruct the image with wheat heads(Y)
 - Global Wheat Dataset,2021 was used to pretrain the model
+
+## Experiments Performed
+### Dataset type and Loss Penalty
+- [x] Blurring Wheat Heads with No Loss Penalty on Bounding Box Pixels
+- [x] Blurring Wheat Heads with Loss Penalty on Bounding Box Pixels
+- [x] Without Blurring Wheat Heads with Loss penalty on Bounding Box Pixels
+
+You can view the set of results displayed above in the Experiments Directory
+
+### Initializing Technique
+- [x] He Normal
+- [ ] COCO weights of CSPDarknet-53
+  
   
 
 ## Architecture
