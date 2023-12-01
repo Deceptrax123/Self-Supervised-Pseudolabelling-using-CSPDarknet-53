@@ -1,9 +1,7 @@
 # Self Supervised Pretraining using Autoencoders to detect multiple objects
 
 ![Output_1](experiments/Regularization/w_0.95_lambda_5/Blurred_X/output.png)
-![Output_3](Experiments/Regularization/w_0.95_lambda_5/no_blur/output_2.png)
-![Output_2](experiments/Regularization/w_0.95_lambda_5/Blurred_X/output_2.png)
-
+![Output_2](Experiments/Regularization/w_0.95_lambda_5/no_blur/output_2.png)
 
 ## Methodology
 - The Model was trained using pixel wise mean square error loss with additional penalty added to pixels that belong to a bounding box.
