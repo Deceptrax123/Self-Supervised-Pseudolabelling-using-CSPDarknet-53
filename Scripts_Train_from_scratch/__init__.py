@@ -1,0 +1,5 @@
+import Scripts_Train_from_scratch.dataset
+import Scripts_Train_from_scratch.dataset_regularization
+import Scripts_Train_from_scratch.initialize_weights
+import Scripts_Train_from_scratch.train
+import Scripts_Train_from_scratch.train_regularization

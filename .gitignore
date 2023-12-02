@@ -13,6 +13,9 @@ wandb
 #Temporary
 weights/
 
+#Pretrained
+pretrained/
+
 # Thumbnails
 ._*
 

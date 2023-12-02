@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import DataLoader
-from dataset import NormMaskedDataset
+from Scripts_Train_from_scratch.dataset_regularization import WheatMaskDataset
 from Model.model import Combined_Model
-from initialize_weights import initialize
+from Scripts_Train_from_scratch.initialize_weights import initialize
 import wandb
 import torch.multiprocessing
 from torch import mps
@@ -13,21 +13,32 @@ import gc
 import os
 from dotenv import load_dotenv
 from torchsummary import summary
-import random
+
+
+def mask_penalty(mask):
+    w1 = 0.95
+    w2 = 0.05
+
+    weighted_mask = (torch.where(mask == 1.0, w1**2, w2**2)).to(device=device)
+
+    return weighted_mask
 
 
 def train_epoch():
     epoch_loss = 0
 
-    for step, (x_sample, y_sample) in enumerate(train_loader):
+    for step, (x_sample, y_sample, mask) in enumerate(train_loader):
         x_sample = x_sample.to(device=device)
         y_sample = y_sample.to(device=device)
+        mask = mask.to(device=device)
 
         predictions = model(x_sample)
         model.zero_grad()
 
         # Compute Loss
-        loss = objective(predictions, y_sample)
+        # L2 Bounding Box Regularization
+        loss = torch.mean(
+            torch.add(objective(predictions, y_sample), lamb*mask_penalty(mask)))
 
         # Perform backpropagation
         loss.backward()
@@ -39,6 +50,7 @@ def train_epoch():
         del x_sample
         del y_sample
         del predictions
+        del mask
         mps.empty_cache()
         gc.collect(generation=2)
 
@@ -49,14 +61,14 @@ def train_epoch():
 def test_epoch():
     epoch_loss = 0
 
-    for step, (x_sample, y_sample) in enumerate(test_loader):
+    for step, (x_sample, y_sample, _) in enumerate(test_loader):
         x_sample = x_sample.to(device=device)
         y_sample = y_sample.to(device=device)
 
         predictions = model(x_sample)
 
         # Compute Loss
-        loss = objective(predictions, y_sample)
+        loss = torch.mean(objective(predictions, y_sample))
 
         # add losses
         epoch_loss += loss.item()
@@ -86,13 +98,13 @@ def training_loop():
             print("L2 Test Loss {loss}".format(loss=test_loss))
 
             wandb.log({
-                "L2 Pixel Train Loss": train_loss,
+                "L2 Pixel Regularization Train Loss": train_loss,
                 "L2 Pixel Test Loss": test_loss
             })
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/run_3/model{epoch}.pth".format(
+                complete_path = "./weights/complete/box_penalty_no_blur/w_0.95_lamb_5/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
@@ -120,8 +132,8 @@ if __name__ == '__main__':
 
     train, test = train_test_split(labs, test_size=0.25, shuffle=True)
 
-    train_set = NormMaskedDataset(paths=train)
-    test_set = NormMaskedDataset(paths=test)
+    train_set = WheatMaskDataset(paths=train)
+    test_set = WheatMaskDataset(paths=test)
 
     wandb.init(
         project="backbone-pretraining-wheats",
@@ -141,15 +153,11 @@ if __name__ == '__main__':
     LR = 0.001
     NUM_EPOCHS = 10000
 
-    objective = nn.MSELoss()
+    objective = nn.MSELoss(reduction='none')
     # models and optimizers
     model = Combined_Model().to(device=device)
 
-    # Initialize Weights
-    initialize(model)
-
-    model_optimizer = torch.optim.Adam(
-        model.parameters(), lr=LR, betas=(0.9, 0.999))
+    # Initialize Weights with coco weights here
 
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
@@ -157,4 +165,4 @@ if __name__ == '__main__':
     mps.empty_cache()
     gc.collect(generation=2)
 
-    training_loop()
+    #training_loop()

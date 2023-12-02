@@ -1,8 +1,23 @@
 import torch
 from torch.utils.data import DataLoader
-from dataset_regularization import WheatMaskDataset
+import os
+import sys
+
+#add cwd to system path
+
+dir=os.getcwd()
+sys.path.append(dir)
+
+from pathlib import Path
+path=Path(dir)
+
+a=str(path.parent.absolute())
+
+sys.path.append(a)
+
+from Scripts_Train_from_scratch.dataset_regularization import WheatMaskDataset
 from Model.model import Combined_Model
-from initialize_weights import initialize
+from Scripts_Train_from_scratch.initialize_weights import initialize
 import wandb
 import torch.multiprocessing
 from torch import mps
@@ -10,7 +25,7 @@ from torch import nn
 import numpy as np
 from sklearn.model_selection import train_test_split
 import gc
-import os
+
 from dotenv import load_dotenv
 from torchsummary import summary
 
@@ -157,12 +172,12 @@ if __name__ == '__main__':
     # models and optimizers
     model = Combined_Model().to(device=device)
 
-    # Initialize Weights
+    #initialize weights
     initialize(model)
 
     model_optimizer = torch.optim.Adam(
         model.parameters(), lr=LR, betas=(0.9, 0.999))
-    lamb = 5.0
+    lamb=5
 
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
