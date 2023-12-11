@@ -18,7 +18,7 @@ You can view the set of results displayed above in the Experiments Directory
 
 ### Initializing Technique
 - [x] He Normal
-- [ ] COCO weights of CSPDarknet-53
+- [x] COCO weights of CSPDarknet-53
   
   
 
