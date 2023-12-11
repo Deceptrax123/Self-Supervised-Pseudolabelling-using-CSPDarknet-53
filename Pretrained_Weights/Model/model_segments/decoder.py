@@ -8,7 +8,7 @@ from Model.model_segments.darknet import DarkResidualBlock
 def conv_batch(in_num, out_num, kernel_size=3, padding=1, output_padding=1, stride=1):
     return nn.Sequential(
         nn.ConvTranspose2d(in_num, out_num, kernel_size=kernel_size,
-                           stride=stride, padding=padding, output_padding=output_padding, bias=True),
+                           stride=stride, padding=padding, output_padding=output_padding, bias=False),
         nn.BatchNorm2d(out_num),
         nn.ReLU())
 
@@ -40,9 +40,6 @@ class Decoder(nn.Module):
 
         self.num_classes = num_classes
 
-        # Encoder Module
-        self.encoder = Darknet53(DarkResidualBlock, 2)
-
         # Linear and upsample modules
         self.fc = nn.Linear(2, 1024)
         self.up = nn.Upsample(scale_factor=8)
@@ -71,12 +68,9 @@ class Decoder(nn.Module):
         self.conv6 = conv_batch(in_num=32, out_num=3,
                                 stride=1, output_padding=0)
 
-    def forward(self, x):
-        # encoder output with buffer outputs for skip connnections
-        x_0, x1, x2, x3, x4, x5 = self.encoder.forward(x)
-
+    def forward(self, x, x1, x2, x3, x4, x5):
         # Linear with reshape and upsampling
-        out = self.fc(x_0)
+        out = self.fc(x)
         out = out.view(out.size(0), 1024, 1, 1)
         out = self.up(out)
 

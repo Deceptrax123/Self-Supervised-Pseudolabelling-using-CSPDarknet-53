@@ -1,8 +1,12 @@
 import torch
 from torch.utils.data import DataLoader
-from Scripts_Train_from_scratch.dataset_regularization import WheatMaskDataset
-from Model.model import Combined_Model
-from Scripts_Train_from_scratch.initialize_weights import initialize
+from Pretrained_Weights.dataset_regularization import WheatMaskDataset
+from Pretrained_Weights.Model.model_segments.decoder import Decoder
+from Pretrained_Weights.Model.model_segments.darknet import Darknet53
+from Pretrained_Weights.Model.model_segments.darknet import DarkResidualBlock as EncResBlock
+from Pretrained_Weights.Model.model_segments.decoder import DecoderResidualBlock as DecResBlock
+from Pretrained_Weights.Model.model import Combined_Model
+from Pretrained_Weights.initialize_weights import initialize
 import wandb
 import torch.multiprocessing
 from torch import mps
@@ -33,7 +37,6 @@ def train_epoch():
         mask = mask.to(device=device)
 
         predictions = model(x_sample)
-        model.zero_grad()
 
         # Compute Loss
         # L2 Bounding Box Regularization
@@ -42,7 +45,7 @@ def train_epoch():
 
         # Perform backpropagation
         loss.backward()
-        model_optimizer.step()
+        optimizer.step()
 
         epoch_loss += loss.item()
 
@@ -86,12 +89,11 @@ def test_epoch():
 def training_loop():
 
     for epoch in range(NUM_EPOCHS):
-        model.train(True)
+        model.train()
         train_loss = train_epoch()
 
         model.eval()
         with torch.no_grad():
-
             test_loss = test_epoch()
             print("Epoch {epoch}".format(epoch=epoch+1))
             print("L2 Train Loss {loss}".format(loss=train_loss))
@@ -104,7 +106,7 @@ def training_loop():
 
             # checkpoints
             if ((epoch+1) % 5 == 0):
-                complete_path = "./weights/complete/box_penalty_no_blur/w_0.95_lamb_5/model{epoch}.pth".format(
+                complete_path = "Pretrained_Weights/weights/run_1/model{epoch}.pth".format(
                     epoch=epoch+1)
 
                 torch.save(model.state_dict(), complete_path)
@@ -155,14 +157,32 @@ if __name__ == '__main__':
 
     objective = nn.MSELoss(reduction='none')
     # models and optimizers
-    model = Combined_Model().to(device=device)
 
-    # Initialize Weights with coco weights here
+    # Backbone Initializer
+    backbone = Darknet53(EncResBlock, 2).to(device=device)
+    weights = torch.load("pretrained/model_best.pth.tar",
+                         map_location='cpu')  # Load COCO weights
+    weights['state_dict'] = {k: v for k, v in weights['state_dict'].items() if k not in [
+        'fc.weight', 'fc.bias']}  # Remove linear layer weights to account for size differences
+    backbone.load_state_dict(weights['state_dict'], strict=False)
 
+    # Decoder
+    decoder = Decoder(DecResBlock, 2).to(device=device)
+    decoder.apply(initialize)  # Apply Normal initialized weights for decoder
+
+    # Combined Model
+    model = Combined_Model(
+        backbone=backbone, decoder=decoder).to(device=device)
+
+    # optimizer
+    optimizer = torch.optim.Adam(
+        params=model.parameters(), lr=0.001, betas=(0.9, 0.999))
+
+    lamb = 1
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
 
     mps.empty_cache()
     gc.collect(generation=2)
 
-    #training_loop()
+    training_loop()

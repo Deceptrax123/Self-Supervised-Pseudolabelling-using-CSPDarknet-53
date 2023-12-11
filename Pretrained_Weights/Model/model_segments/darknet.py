@@ -6,7 +6,7 @@ from torchsummary import summary
 def conv_batch(in_num, out_num, kernel_size=3, padding=1, stride=1):
     return nn.Sequential(
         nn.Conv2d(in_num, out_num, kernel_size=kernel_size,
-                  stride=stride, padding=padding, bias=True),
+                  stride=stride, padding=padding, bias=False),
         nn.BatchNorm2d(out_num),
         nn.LeakyReLU())
 
@@ -55,6 +55,12 @@ class Darknet53(nn.Module):
             block, in_channels=1024, num_blocks=4)
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(1024, self.num_classes)
+
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, (nn.Linear)):
+            nn.init.normal_(module.weight.data)
 
     def forward(self, x):
         out = self.conv1(x)

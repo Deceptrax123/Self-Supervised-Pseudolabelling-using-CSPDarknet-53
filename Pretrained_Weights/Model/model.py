@@ -1,19 +1,16 @@
-from Model.model_segments.decoder import Decoder
-from Model.model_segments.decoder import DecoderResidualBlock
 from torchsummary import summary
 from torch.nn import Module
 
 
 class Combined_Model(Module):
-    def __init__(self):
+    def __init__(self, backbone, decoder):
         super(Combined_Model, self).__init__()
 
-        self.model = Decoder(DecoderResidualBlock, 2)
+        self.backbone = backbone
+        self.decoder = decoder
 
     def forward(self, x):
-        x = self.model(x)
+        x, x1, x2, x3, x4, x5 = self.backbone.forward(x)
+        x = self.decoder(x, x1, x2, x3, x4, x5)
 
         return x
-
-# model = Combined_Model()
-# summary(model, input_size=(3, 224, 224), batch_size=8, device='cpu')
