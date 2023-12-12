@@ -12,6 +12,7 @@ wandb
 
 #Temporary
 weights/
+backbone_weights/
 
 #Pretrained
 pretrained/
