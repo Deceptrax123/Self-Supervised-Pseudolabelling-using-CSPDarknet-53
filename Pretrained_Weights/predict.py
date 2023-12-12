@@ -23,7 +23,7 @@ def get_predictions():
     # Eval mode
     model.eval()
     model.load_state_dict(torch.load(
-        "Pretrained_Weights/weights/run_1/model15.pth"))
+        "Pretrained_Weights/weights/run_1/model50.pth"))
 
     load_dotenv(".env")
 
