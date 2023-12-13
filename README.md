@@ -25,8 +25,8 @@ You can view the set of results displayed above in the Experiments Directory
 ## Architecture
 |Architecture|Description|
 |-|----|
-|Backbone|CSPDarknet-53|
-|Decoder|Inverse CSPDarknet-53|
+|Backbone|Darknet|
+|Decoder|Inverse Darknet
 |Skip Connections|Between Residual Blocks from encoder to decoder|
 
 ## Usage
